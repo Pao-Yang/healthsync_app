@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "873632745898",
+    "project_id": "healthsync-cea1a",
+    "storage_bucket": "healthsync-cea1a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873632745898:android:7b6ce3f6728192702983d3",
+        "android_client_info": {
+          "package_name": "com.pao.healthsync_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNJSRlLaLnZ0REzHWmaEVySjQ8o2k30a8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873632745898:android:ca9930e331d1f0bf2983d3",
+        "android_client_info": {
+          "package_name": "moodeng.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNJSRlLaLnZ0REzHWmaEVySjQ8o2k30a8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
