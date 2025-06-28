@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:healthsync_app/screens/dashboard_screen.dart';
 
+//เป็น StatefulWidget เพราะมีการเปลี่ยนสถานะ _loading และใช้ TextEditingController
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -11,16 +12,19 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  //_loading ใช้สำหรับแสดง CircularProgressIndicator ระหว่างรอระบบสมัคร
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _loading = false;
 
   Future<void> register() async {
+    //อ่านค่าที่ผู้ใช้พิมพ์ และลบช่องว่าง
     final name = nameController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
+    //ถ้ามีช่องว่าง แสดง SnackBar เตือนผู้ใช้
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('ກະລຸນາປ້ອນຂໍ້ມູນຂອງທ່ານໃຫ້ຄົບຖ້ວນ')),
@@ -28,12 +32,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    //เปลี่ยนสถานะให้แสดงปุ่มโหลด
     setState(() => _loading = true);
 
     try {
+      //ใช้ Firebase สร้างบัญชีผู้ใช้ใหม่
       final credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-
+      
+      //บันทึกข้อมูลผู้ใช้ลงใน Firestore (collection users)
+      //ใช้ serverTimestamp() เพื่อระบุเวลาที่สมัคร
       final uid = credential.user!.uid;
 
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
@@ -42,11 +50,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
+      //หลังสมัครเสร็จ นำผู้ใช้ไปหน้า Dashboard และเคลียร์ stack
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const DashboardScreen()),
         (route) => false,
       );
+
+      //กรณี Firebase ส่ง error: แจ้งข้อความให้เหมาะสม เช่น อีเมลซ้ำ, รหัสสั้นเกิน
     } on FirebaseAuthException catch (e) {
       String message = 'ເກີດຂໍ້ຜິດພາດໃນການລົງທະບຽນ';
       if (e.code == 'email-already-in-use') {
@@ -55,9 +66,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         message = 'ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ';
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('ເກີດຂໍ້ຜິດພາດ: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } catch (e) {    //กรณีอื่น ๆ ที่ไม่ใช่ Firebase Exception
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('ເກີດຂໍ້ຜິດພາດ: $e')));
     } finally {
       setState(() => _loading = false);
     }
@@ -65,6 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //ตั้งพื้นหลังไล่สีดำ → เขียว
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -76,7 +92,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         padding: const EdgeInsets.all(24),
         child: Center(
-          child: SingleChildScrollView(
+          //กล่องโปร่งแสงสำหรับใส่ฟอร์มสมัครสมาชิก
+          child: SingleChildScrollView(   
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -89,12 +106,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   const Text(
                     'ລົງທະບຽນ',
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                  
+
                   const SizedBox(height: 28),
 
-                  const Text('ຊື່ ແລະ ນາມສະກຸນ', style: TextStyle(color: Colors.white70)),
+                  const Text(
+                    'ຊື່ ແລະ ນາມສະກຸນ',
+                    style: TextStyle(color: Colors.white70),
+                  ),
                   const SizedBox(height: 6),
                   TextField(
                     controller: nameController,
@@ -104,7 +128,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintStyle: const TextStyle(color: Colors.white38),
                       filled: true,
                       fillColor: Colors.white10,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -120,12 +146,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintStyle: const TextStyle(color: Colors.white38),
                       filled: true,
                       fillColor: Colors.white10,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
 
-                  const Text('ລະຫັດຜ່ານ', style: TextStyle(color: Colors.white70)),
+                  const Text(
+                    'ລະຫັດຜ່ານ',
+                    style: TextStyle(color: Colors.white70),
+                  ),
                   const SizedBox(height: 6),
                   TextField(
                     controller: passwordController,
@@ -136,7 +167,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintStyle: const TextStyle(color: Colors.white38),
                       filled: true,
                       fillColor: Colors.white10,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -148,14 +181,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.tealAccent.shade700,
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: _loading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text(
-                              'ລົງທະບຽນ',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                            ),
+                      child:
+                          _loading
+                              ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                              : const Text(
+                                'ລົງທະບຽນ',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                     ),
                   ),
 

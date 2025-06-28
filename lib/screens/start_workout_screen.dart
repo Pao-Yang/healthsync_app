@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class StartWorkoutScreen extends StatefulWidget {
+class StartWorkoutScreen extends StatefulWidget {//ใช้ StatefulWidget เพราะ state (seconds, isRunning) เปลี่ยนตลอดเวลา
+  //รับ workoutTitle จากหน้าก่อนหน้า เพื่อรู้ว่าผู้ใช้กำลังออกกำลังกายประเภทไหน
   final String workoutTitle;
 
   const StartWorkoutScreen({super.key, required this.workoutTitle});
@@ -12,15 +13,15 @@ class StartWorkoutScreen extends StatefulWidget {
 }
 
 class _StartWorkoutScreenState extends State<StartWorkoutScreen> {
-  int seconds = 0;
-  Timer? timer;
-  bool isRunning = false;
+  int seconds = 0;   //จำนวนวินาทีที่จับได้
+  Timer? timer;    //ตัวจับเวลา (dart:async)
+  bool isRunning = false;   // ควบคุมปุ่มและสถานะว่ากำลังนับอยู่ไหม
 
   Future<void> saveWorkoutData() async {
     await FirebaseFirestore.instance.collection('workouts').add({
-      'title': widget.workoutTitle,
-      'duration': seconds,
-      'timestamp': FieldValue.serverTimestamp(),
+      'title': widget.workoutTitle,  //เก็บ title ของ workout
+      'duration': seconds,     //เก็บระยะเวลา (seconds)
+      'timestamp': FieldValue.serverTimestamp(),  //ใช้ serverTimestamp() เพื่อระบุเวลาบนเซิร์ฟเวอร์
     });
   }
 
@@ -51,6 +52,8 @@ class _StartWorkoutScreenState extends State<StartWorkoutScreen> {
   }
 
   String formatTime(int totalSeconds) {
+    //แปลงวินาทีเป็น "นาที:วินาที"
+    //ใช้ padLeft เพื่อเติมเลข 0 ด้านหน้าให้ครบ 2 หลัก
     final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
     final secs = (totalSeconds % 60).toString().padLeft(2, '0');
     return '$minutes:$secs';

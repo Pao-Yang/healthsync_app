@@ -11,11 +11,11 @@ class TargetProgressCard extends StatefulWidget {
 }
 
 class _TargetProgressCardState extends State<TargetProgressCard> {
-  String? _targetWeight;
-  double? _latestWeight;
+  String? _targetWeight; //_targetWeight: ค่าน้ำหนักเป้าหมายจาก Firestore
+  double? _latestWeight; //_latestWeight: ค่าน้ำหนักล่าสุดของผู้ใช้
 
   @override
-  void initState() {
+  void initState() { //เรียก _loadData() เมื่อ Widget เริ่มแสดงผล
     super.initState();
     _loadData();
   }
@@ -52,7 +52,7 @@ class _TargetProgressCardState extends State<TargetProgressCard> {
     setState(() {});
   }
 
-  double? _calculateProgress() {
+  double? _calculateProgress() { //ถ้าน้ำหนักล่าสุด = เป้าหมาย 
     if (_latestWeight == null || _targetWeight == null) return null;
     final target = double.tryParse(_targetWeight!);
     if (target == null) return null;

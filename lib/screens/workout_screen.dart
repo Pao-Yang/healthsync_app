@@ -6,6 +6,7 @@ class WorkoutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //สร้างลิสต์ workout แต่ละประเภท เป็น Map ที่เก็บชื่อ, ไอคอน และสี
     final List<Map<String, dynamic>> workouts = [
       {
         'title': 'Cardio',
@@ -31,7 +32,7 @@ class WorkoutScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
+      appBar: AppBar(  //แถบด้านบนแบบโปร่งใส (ไม่มีพื้นหลัง)
         title: const Text(
           'ເລືອກປະເພດການອອກກຳລັງກາຍ',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
@@ -43,7 +44,7 @@ class WorkoutScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: GridView.builder(
+        child: GridView.builder(  //สร้าง GridView ที่แสดง 2 คอลัมน์
           itemCount: workouts.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -53,9 +54,9 @@ class WorkoutScreen extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             final workout = workouts[index];
-            return GestureDetector(
+            return GestureDetector( //ใช้ GestureDetector เพื่อคลิกแต่ละกล่อง
               onTap: () {
-                Navigator.push(
+                Navigator.push( //เมื่อคลิก → นำไปยังหน้า StartWorkoutScreen และส่งค่า workoutTitle ไปด้วย
                   context,
                   MaterialPageRoute(
                     builder: (context) =>

@@ -10,20 +10,22 @@ class HealthFormScreen extends StatefulWidget {
 }
 
 class _HealthFormScreenState extends State<HealthFormScreen> {
+  //ควบคุมค่าในช่องกรอกน้ำหนัก, ส่วนสูง, และอายุ
   final TextEditingController weightController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
 
+//selectedGenderIndex และ selectedActivityIndex คือค่าที่เลือกไว้ (โดย default)
   int selectedGenderIndex = 0;
   int selectedActivityIndex = 1;
-
+//ตัวเลือกให้ผู้ใช้เลือกเพศและระดับกิจกรรม
   final List<String> genderOptions = ['ຊາຍ', 'ຍີງ', 'ອື່ນໆ'];
   final List<String> activityOptions = ['ບໍ່ຄ່ອຍອອກກຳລັງກາຍ', 'ປົກກະຕີ', 'ອອກກຳລັງກາຍສະໝໍ່າສະເໝີ'];
-
+//ดึงค่าที่เลือกมาใช้งานแบบอ่านง่าย
   String get gender => genderOptions[selectedGenderIndex];
   String get activityLevel => activityOptions[selectedActivityIndex];
 
-  void saveHealthData() async {
+  void saveHealthData() async { //อ่านค่าจาก TextField  ตรวจสอบว่าผู้ใช้ล็อกอินหรือยัง ถ้าล็อกอินแล้ว บันทึกข้อมูลเข้า Firestore
     final weight = weightController.text.trim();
     final height = heightController.text.trim();
     final age = ageController.text.trim();

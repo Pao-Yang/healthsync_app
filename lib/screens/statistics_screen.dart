@@ -10,7 +10,7 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
-  List<Map<String, dynamic>> workouts = [];
+  List<Map<String, dynamic>> workouts = []; //เก็บรายการของ workouts ที่ดึงมาจาก Firestore
 
   @override
   void initState() {
@@ -18,6 +18,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     loadWorkoutsFromFirestore();
   }
 
+
+//ดึงข้อมูลจากคอลเลกชัน workouts แล้วเรียงจากใหม่ไปเก่า (timestamp)
   Future<void> loadWorkoutsFromFirestore() async {
     final snapshot =
         await FirebaseFirestore.instance
@@ -35,15 +37,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     });
   }
 
-  Future<void> deleteWorkout(String docId) async {
-    await FirebaseFirestore.instance.collection('workouts').doc(docId).delete();
-    loadWorkoutsFromFirestore();
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("ລົບຂໍ້ມູນສຳເລັດ")));
-    // รีโหลดหลังลบ
-  }
 
+//แปลงเวลา Timestamp จาก Firestore ให้เป็นข้อความที่อ่านง่าย เช่น 28 Jun 2025 21:30
   String formatDate(Timestamp? timestamp) {
     if (timestamp == null) return 'ບໍ່ຮູ້ເວລາ';
     final dt = timestamp.toDate();

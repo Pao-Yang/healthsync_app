@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-class SetTargetWeightScreen extends StatefulWidget {
+class SetTargetWeightScreen extends StatefulWidget { //ใช้ Stateful เพราะข้อมูลอัปเดตเมื่อโหลดน้ำหนักหรือกดบันทึก
   const SetTargetWeightScreen({super.key});
 
   @override
@@ -13,8 +13,8 @@ class SetTargetWeightScreen extends StatefulWidget {
 class _SetTargetWeightScreenState extends State<SetTargetWeightScreen> {
   final TextEditingController _controller = TextEditingController();
   bool _loading = false;
-  String? _currentTarget;
-  double? _latestWeight;
+  String? _currentTarget; //_currentTarget: น้ำหนักเป้าหมาย
+  double? _latestWeight; //_latestWeight: น้ำหนักล่าสุดจาก Firestore
 
   @override
   void initState() {
@@ -93,7 +93,7 @@ class _SetTargetWeightScreenState extends State<SetTargetWeightScreen> {
     );
   }
 
-  double? _calculateProgress() {
+  double? _calculateProgress() { //คำนวณ % การเข้าใกล้เป้าหมาย ถ้าน้ำหนักใกล้เป้าหมาย = ความคืบหน้ามากขึ้น คืนค่าอยู่ในช่วง 0.0 - 1.0
     if (_latestWeight == null || _currentTarget == null) return null;
     final target = double.tryParse(_currentTarget!);
     if (target == null) return null;
@@ -105,7 +105,7 @@ class _SetTargetWeightScreenState extends State<SetTargetWeightScreen> {
     return progress.clamp(0.0, 1.0);
   }
 
-  String getStatusMessage() {
+  String getStatusMessage() { //เปรียบเทียบกับเป้าหมาย
     if (_latestWeight == null || _currentTarget == null) return '';
     final target = double.tryParse(_currentTarget!);
     if (target == null) return '';
@@ -119,7 +119,7 @@ class _SetTargetWeightScreenState extends State<SetTargetWeightScreen> {
     }
   }
 
-  String? getSuggestion(double progress) {
+  String? getSuggestion(double progress) { //ถ้าความคืบหน้าน้อยกว่า 50% → ให้คำแนะนำเรื่องอาหารและการออกกำลังกาย
     if (progress < 0.5) {
       return 'ຍັງຫ່າງຈາກເປົ້າໝາຍຫຼາຍ ລອງປັບອາຫານ ແລະ ອອກກຳລັງກາຍເພີ່ມເຕີມ!';
     } else if (progress >= 1.0) {

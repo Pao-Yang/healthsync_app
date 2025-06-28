@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:healthsync_app/screens/dashboard_screen.dart';
 
+//ใช้ StatefulWidget เพราะต้องเก็บสถานะ เช่น loading และข้อมูลจาก TextField
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -10,35 +11,48 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  //สร้าง controller สำหรับรับข้อมูลจาก TextField
+  //ตัวแปร _loading ใช้สำหรับแสดง CircularProgressIndicator ระหว่างโหลด
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _loading = false;
 
   Future<void> login() async {
+    //ดึงค่า email และ password ที่ผู้ใช้กรอกมา แล้ว trim() เพื่อลบช่องว่าง
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
+    //ถ้าช่องว่าง แสดง SnackBar แจ้งเตือน
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ກະລຸນາປ້ອນອີເມລ ແລະ ລະຫັດຜ່ານໃຫ້ຄົບຖ້ວນ')),
+        const SnackBar(
+          content: Text('ກະລຸນາປ້ອນອີເມລ ແລະ ລະຫັດຜ່ານໃຫ້ຄົບຖ້ວນ'),
+        ),
       );
       return;
     }
-
+    //_loading = true เพื่อแสดง indicator ว่ากำลังโหลด
     setState(() => _loading = true);
 
+    //ใช้ Firebase Auth เข้าสู่ระบบด้วยอีเมลและรหัสผ่าน
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      //หากสำเร็จ พาไปหน้า DashboardScreen และล้าง navigation stack ไม่ให้ย้อนกลับได้
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const DashboardScreen()),
         (route) => false,
       );
+
+      //ดักจับ error จาก Firebase เช่น ไม่มีผู้ใช้, รหัสผ่านผิด
     } on FirebaseAuthException catch (e) {
       String message = 'ເກີດຂໍ້ຜິດພາດໃນການເຂົ້າສູ່ລະບົບ';
+
+      //ตรวจรหัส error จาก Firebase แล้วเปลี่ยนข้อความแสดงผลตามกรณี
       if (e.code == 'user-not-found') {
         message = 'ບໍ່ພົບບັນຊີຂອງທ່ານ';
       } else if (e.code == 'wrong-password') {
@@ -63,6 +77,8 @@ class _LoginScreenState extends State<LoginScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
+
+        //กล่องโปร่งแสง ขอบโค้ง ใช้สำหรับวางฟอร์ม login
         padding: const EdgeInsets.all(24),
         child: Center(
           child: SingleChildScrollView(
@@ -137,6 +153,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       icon: const Icon(Icons.login),
+
+                      //ถ้า _loading = true แสดงวงกลมโหลดแทนข้อความ
                       label:
                           _loading
                               ? const CircularProgressIndicator(
@@ -151,9 +169,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                     ),
                   ),
-                  // เพิ่มตรงนี้ใน build method หลังปุ่มเข้าสู่ระบบและก่อน "ยังไม่มีบัญชี? สมัครสมาชิก"
+
                   const SizedBox(height: 12),
                   Center(
+                    //ใช้ GestureDetector เพื่อให้คลิกได้ → นำไปหน้า /forgot_password และ /register
                     child: GestureDetector(
                       onTap:
                           () => Navigator.pushNamed(
@@ -164,7 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         'ລືມລະຫັດຜ່ານ?',
                         style: TextStyle(
                           color: Color.fromARGB(255, 255, 255, 255),
-                          
                         ),
                       ),
                     ),

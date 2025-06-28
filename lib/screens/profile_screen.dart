@@ -22,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (weight == null || heightCm == null || heightCm == 0) return {};
 
     final heightM = heightCm / 100;
-    final bmi = weight / (heightM * heightM);
+    final bmi = weight / (heightM * heightM); //กำหนดประเภทของ BMI เป็น 5 กลุ่ม:
 
     String category;
     Color color;
@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     };
   }
 
-  String getBMISuggestion(double bmi) {
+  String getBMISuggestion(double bmi) {  //ส่งคำแนะนำด้านสุขภาพตามช่วง BMI ที่คำนวณได้ เช่น:
     if (bmi < 18.5) {
       return 'ຄວນເພີ່ມອາຫານ ແລະ ການອອກກຳລັງກາຍສ້າງກ້າມເນື້ອ';
     } else if (bmi < 23) {
@@ -66,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  void initState() {
+  void initState() { //โหลดข้อมูลล่าสุดจาก users/{uid}/health_data เรียงตาม timestamp  ดึงแค่ 1 เอกสารล่าสุด (limit(1))
     super.initState();
     fetchHealthData();
   }
@@ -194,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _bmiCard(Map<String, dynamic> bmiData) {
+  Widget _bmiCard(Map<String, dynamic> bmiData) { //แสดง BMI ที่คำนวณได้, กลุ่มน้ำหนัก, และคำแนะนำ
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(

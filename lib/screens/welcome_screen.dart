@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+  const WelcomeScreen({super.key}); //super.key คือการส่ง key ไปยังคลาสแม่
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    //Scaffold เป็น widget ที่ให้โครงสร้างหน้าจอพื้นฐาน เช่น app bar, body, drawer เป็นต้น
+    return Scaffold( 
+      // Stack คือ widget ที่ใช้ซ้อน widget หลาย ๆ ตัวบนหน้าจอ (เหมือนชั้น ๆ)
       body: Stack(
         children: [
           // รูปพื้นหลังเต็มจอ
@@ -24,6 +26,7 @@ class WelcomeScreen extends StatelessWidget {
           ),
 
           // เนื้อหาด้านหน้า
+          //SafeArea ป้องกันไม่ให้ widget ชิดขอบหน้าจอเกินไป (กันชนตรง notch, status bar, etc.)
           SafeArea(
             child: Center(
               child: Padding(
@@ -58,7 +61,7 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                       ),
                       child: const Text(
-                        "เริ่มต้น",
+                        "ເລີ່ມຕົ້ນ",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

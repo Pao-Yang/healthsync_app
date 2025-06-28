@@ -17,7 +17,7 @@ class _BMIChartScreenState extends State<BMIChartScreen> {
   bool _isLoading = true;
 
   @override
-  void initState() {
+  void initState() {  //ดึง targetWeight และคำนวณค่า เป้าหมาย BMI
     super.initState();
     _fetchBMIData();
   }
@@ -157,7 +157,7 @@ class _BMIChartScreenState extends State<BMIChartScreen> {
                                 ),
                               ),
                               borderData: FlBorderData(show: false),
-                              lineBarsData: [
+                              lineBarsData: [ //ค่าที่วาดมาจาก _bmiData (แต่ละจุดมี timestamp และ bmi)
                                 LineChartBarData(
                                   isCurved: true,
                                   color: Colors.tealAccent,
@@ -173,7 +173,7 @@ class _BMIChartScreenState extends State<BMIChartScreen> {
                                       .map((e) => FlSpot(e.key.toDouble(), e.value.bmi))
                                       .toList(),
                                 ),
-                                if (_targetBMI != null)
+                                if (_targetBMI != null) //เป็นเส้นขีดขาวจางแนวนอน เพื่อให้เห็นว่าค่า BMI ปัจจุบันใกล้เป้าหมายหรือยัง
                                   LineChartBarData(
                                     isCurved: false,
                                     color: Colors.grey,
